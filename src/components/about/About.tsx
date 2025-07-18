@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -17,6 +17,8 @@ const AboutMe = () => {
   const containerRef = useRef<HTMLDivElement>(null)
   const titleRef = useRef<HTMLHeadingElement>(null)
   const cardRefs = useRef<HTMLDivElement[]>([])
+  const [showTooltip, setShowTooltip] = useState(false)
+  const profileImageRef = useRef<HTMLDivElement>(null)
   const words = ["Web", "Software", "Front-end", "Full-stack", "Designer &"];
 
   useEffect(() => {
@@ -111,6 +113,17 @@ const AboutMe = () => {
     }
   }
 
+  // Separate handlers for better debugging
+  const handleMouseEnter = () => {
+    console.log('Mouse enter triggered') // Debug log
+    setShowTooltip(true)
+  }
+
+  const handleMouseLeave = () => {
+    console.log('Mouse leave triggered') // Debug log
+    setShowTooltip(false)
+  }
+
   return (
     <div ref={containerRef} className="relative min-h-screen bg-black overflow-hidden">
       {/* Background Particles */}
@@ -156,16 +169,34 @@ const AboutMe = () => {
                 <div className="flex items-center space-x-4 mb-6">
                   <div className="relative flex-shrink-0">
                     <div className="absolute -inset-1 bg-gradient-to-r from-blue-400/40 to-cyan-400/40 rounded-full blur opacity-60"></div>
-                    <div className="relative w-16 h-16 md:w-20 md:h-20 bg-slate-800/50 rounded-full border-2 border-blue-500/30 flex items-center justify-center overflow-hidden">
+                    <div 
+                      ref={profileImageRef}
+                      className="relative w-16 h-16 md:w-20 md:h-20 bg-slate-800/50 rounded-full border-2 border-blue-500/30 flex items-center justify-center overflow-hidden cursor-pointer z-20"
+                      onMouseEnter={handleMouseEnter}
+                      onMouseLeave={handleMouseLeave}
+                    >
                       <Image
                         src="/images/Lorenzo.png" // Replace with your actual image path
                         alt="Profile"
                         width={80}
                         height={80}
-                        className="w-full h-full object-cover rounded-full"
+                        className="w-full h-full object-cover rounded-full pointer-events-none"
                         priority
                       />
                     </div>
+                    
+                    {/* Tooltip - Mobile responsive positioning */}
+                    {showTooltip && (
+                      <div className="absolute -top-12 md:-top-16 left-0 lg:left-1/2 transform -translate-x-0 lg:-translate-x-1/2 z-50 pointer-events-none">
+                        <div className="bg-slate-800/95 backdrop-blur-sm border border-blue-500/30 rounded-lg px-2 md:px-3 py-1.5 md:py-2 shadow-lg ">
+                          <p className="text-white text-xs leading-tight sm:leading-normal text-center sm:text-left whitespace-nowrap">
+                            My profile picture on every social media <br></br> after getting one decent photo lol
+                          </p>
+                          {/* Tooltip arrow */}
+                          <div className="absolute top-full left-0 lg:left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-slate-800/95"></div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                   <div className="flex-1">
                     <h3 className="text-white text-xl md:text-2xl mb-1 group-hover:text-blue-300 transition-colors">
@@ -305,7 +336,7 @@ const AboutMe = () => {
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl opacity-40"></div>
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl opacity-40"></div>
 
-                  {/* Bottom fade */}
+      {/* Bottom fade */}
       <div className="pointer-events-none absolute bottom-0 left-0 w-full h-50 bg-gradient-to-t from-[#02000D] to-transparent" />
       
     </div>

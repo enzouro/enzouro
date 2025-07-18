@@ -20,6 +20,7 @@ interface ProjectData {
   image: string
   overview: string
   technologies: Technology[]
+  link?: string // Added link field
 }
 
 interface ProjectDetailProps {
@@ -37,6 +38,7 @@ const ProjectDetails: React.FC<ProjectDetailProps> = ({ data, onBack }) => {
   const techRef = useRef<HTMLDivElement>(null)
   const techItemsRef = useRef<HTMLDivElement[]>([])
   const backButtonRef = useRef<HTMLButtonElement>(null)
+  const viewProjectRef = useRef<HTMLAnchorElement>(null) // New ref for view project button
 
   // Set initial states immediately to prevent flash
   useLayoutEffect(() => {
@@ -50,6 +52,7 @@ const ProjectDetails: React.FC<ProjectDetailProps> = ({ data, onBack }) => {
         imageRef.current,
         overviewRef.current,
         techRef.current,
+        viewProjectRef.current,
         ...techItemsRef.current
       ], {
         opacity: 0,
@@ -64,6 +67,7 @@ const ProjectDetails: React.FC<ProjectDetailProps> = ({ data, onBack }) => {
       gsap.set(imageRef.current, { scale: 0.8, rotateY: 15 })
       gsap.set(overviewRef.current, { y: 40 })
       gsap.set(techRef.current, { y: 30 })
+      gsap.set(viewProjectRef.current, { y: 20, scale: 0.9 })
       
       // Set tech items initial states
       techItemsRef.current.forEach((item) => {
@@ -114,6 +118,15 @@ const ProjectDetails: React.FC<ProjectDetailProps> = ({ data, onBack }) => {
         duration: 0.8,
         ease: "power2.out"
       }, "-=0.7")
+
+      // View Project button animation
+      tl.to(viewProjectRef.current, {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.8,
+        ease: "power2.out"
+      }, "-=0.6")
 
       // Image animation
       tl.to(imageRef.current, {
@@ -232,7 +245,7 @@ const ProjectDetails: React.FC<ProjectDetailProps> = ({ data, onBack }) => {
             {data.title}
           </h1>
           
-          <div className="flex flex-col gap-4 text-lg">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-8 text-lg mb-8">
             <div 
               ref={roleRef}
               className="text-blue-300 font-medium gsap-hidden"
@@ -247,6 +260,45 @@ const ProjectDetails: React.FC<ProjectDetailProps> = ({ data, onBack }) => {
               {data.date}
             </div>
           </div>
+
+          {/* View Project Button */}
+          {data.link && (
+            <a
+              ref={viewProjectRef}
+              href={data.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-3 group gsap-hidden"
+            >
+              <div className="absolute -inset-2 bg-gradient-to-r from-blue-400/20 to-cyan-400/20 rounded-xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              
+              <div className="relative bg-gradient-to-r from-blue-500/10 to-cyan-500/10 backdrop-blur-sm border border-blue-500/30 rounded-xl px-6 py-3 transition-all duration-300 group-hover:border-blue-500/50 group-hover:bg-gradient-to-r group-hover:from-blue-500/20 group-hover:to-cyan-500/20">
+                <div className="flex items-center gap-3">
+                  <svg 
+                    className="w-5 h-5 text-blue-400 transition-all duration-300 group-hover:text-blue-300 group-hover:scale-110" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                  <span className="text-white font-medium transition-colors duration-300 group-hover:text-blue-300">
+                    View Project
+                  </span>
+                  <svg 
+                    className="w-4 h-4 text-blue-400 transition-all duration-300 group-hover:text-blue-300 group-hover:translate-x-1" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+                
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-blue-500/5 via-transparent to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              </div>
+            </a>
+          )}
         </div>
 
         {/* Full Width Image Section */}
@@ -262,6 +314,7 @@ const ProjectDetails: React.FC<ProjectDetailProps> = ({ data, onBack }) => {
                 src={data.image}
                 width={1200}
                 height={675}
+                
                 alt={`${data.title} project screenshot`}
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               />

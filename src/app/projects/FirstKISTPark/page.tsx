@@ -15,7 +15,8 @@ const FirstKISTPark = () => {
       { name: "JavaScript", icon: "/images/icons/react.svg" },
       { name: "Google Search Console", icon: "/images/icons/google-search-console.svg" },
       { name: "Google Analytics", icon: "/images/icons/google-analytics.svg" },
-    ]
+    ],
+    link: "https://firstkistpark.com",
   }
 
   return (

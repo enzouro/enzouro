@@ -65,7 +65,7 @@ const Project = () => {
       description: "July.2025/Dev, Design & Documentation",
       image: "/images/flutter-splash.png",
       hoverGif: "/images/flutter-app.png",
-      detailsUrl: "/projects/wakenav",
+      detailsUrl: "/projects/WakeNav",
       techStack: [
         { name: "Flutter", icon: "/images/icons/flutter.svg" },
         { name: "Dart", icon: "/images/icons/dart.svg" },
@@ -511,7 +511,7 @@ const Project = () => {
         </div>
       </div>
       {/* Bottom fade */}
-      <div className="pointer-events-none absolute bottom-0 left-0 w-full h-50 bg-gradient-to-t from-[#000000] to-transparent" />
+      <div className="z-0 pointer-events-none absolute bottom-0 left-0 w-full h-25 bg-gradient-to-t from-[#000000] to-transparent" />
     </div>
   );
 };
