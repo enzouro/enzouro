@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useLayoutEffect } from 'react'
 import Image from 'next/image'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -38,162 +38,144 @@ const ProjectDetails: React.FC<ProjectDetailProps> = ({ data, onBack }) => {
   const techItemsRef = useRef<HTMLDivElement[]>([])
   const backButtonRef = useRef<HTMLButtonElement>(null)
 
+  // Set initial states immediately to prevent flash
+  useLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+      // Set all initial states immediately
+      gsap.set([
+        backButtonRef.current,
+        titleRef.current,
+        roleRef.current,
+        dateRef.current,
+        imageRef.current,
+        overviewRef.current,
+        techRef.current,
+        ...techItemsRef.current
+      ], {
+        opacity: 0,
+        clearProps: "transform" // Clear any existing transforms
+      })
+
+      // Set specific initial transforms
+      gsap.set(backButtonRef.current, { scale: 0.8, y: -20 })
+      gsap.set(titleRef.current, { y: 50, scale: 0.8 })
+      gsap.set(roleRef.current, { x: -30 })
+      gsap.set(dateRef.current, { x: -30 })
+      gsap.set(imageRef.current, { scale: 0.8, rotateY: 15 })
+      gsap.set(overviewRef.current, { y: 40 })
+      gsap.set(techRef.current, { y: 30 })
+      
+      // Set tech items initial states
+      techItemsRef.current.forEach((item) => {
+        if (item) {
+          gsap.set(item, { y: 30, scale: 0.8 })
+        }
+      })
+    }, containerRef)
+
+    return () => ctx.revert()
+  }, []) // Empty dependency array - only run once
+
   useEffect(() => {
     const ctx = gsap.context(() => {
       // Timeline for initial page load animations
-      const tl = gsap.timeline({ delay: 0.2 })
+      const tl = gsap.timeline({ delay: 0.1 }) // Reduced delay since we're using useLayoutEffect
 
       // Back button animation
-      tl.fromTo(backButtonRef.current,
-        {
-          opacity: 0,
-          scale: 0.8,
-          y: -20
-        },
-        {
-          opacity: 1,
-          scale: 1,
-          y: 0,
-          duration: 0.8,
-          ease: "power2.out"
-        }
-      )
+      tl.to(backButtonRef.current, {
+        opacity: 1,
+        scale: 1,
+        y: 0,
+        duration: 0.8,
+        ease: "power2.out"
+      })
 
       // Title animation
-      tl.fromTo(titleRef.current, 
-        { 
-          opacity: 0, 
-          y: 50,
-          scale: 0.8
-        },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 1,
-          ease: "power3.out"
-        },
-        "-=0.5"
-      )
+      tl.to(titleRef.current, {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        duration: 1,
+        ease: "power3.out"
+      }, "-=0.5")
 
       // Role animation
-      tl.fromTo(roleRef.current,
-        {
-          opacity: 0,
-          x: -30
-        },
-        {
-          opacity: 1,
-          x: 0,
-          duration: 0.8,
-          ease: "power2.out"
-        },
-        "-=0.5"
-      )
+      tl.to(roleRef.current, {
+        opacity: 1,
+        x: 0,
+        duration: 0.8,
+        ease: "power2.out"
+      }, "-=0.5")
 
       // Date animation
-      tl.fromTo(dateRef.current,
-        {
-          opacity: 0,
-          x: -30
-        },
-        {
-          opacity: 1,
-          x: 0,
-          duration: 0.8,
-          ease: "power2.out"
-        },
-        "-=0.7"
-      )
+      tl.to(dateRef.current, {
+        opacity: 1,
+        x: 0,
+        duration: 0.8,
+        ease: "power2.out"
+      }, "-=0.7")
 
       // Image animation
-      tl.fromTo(imageRef.current,
-        {
-          opacity: 0,
-          scale: 0.8,
-          rotateY: 15
-        },
-        {
-          opacity: 1,
-          scale: 1,
-          rotateY: 0,
-          duration: 1,
-          ease: "power2.out"
-        },
-        "-=0.3"
-      )
+      tl.to(imageRef.current, {
+        opacity: 1,
+        scale: 1,
+        rotateY: 0,
+        duration: 1,
+        ease: "power2.out"
+      }, "-=0.3")
 
       // Overview animation with ScrollTrigger
-      gsap.fromTo(overviewRef.current,
-        {
-          opacity: 0,
-          y: 40
-        },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 1,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: overviewRef.current,
-            start: "top 80%",
-            end: "bottom 20%",
-            toggleActions: "play none none reverse"
-          }
+      gsap.to(overviewRef.current, {
+        opacity: 1,
+        y: 0,
+        duration: 1,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: overviewRef.current,
+          start: "top 80%",
+          end: "bottom 20%",
+          toggleActions: "play none none reverse"
         }
-      )
+      })
 
       // Tech section title
-      gsap.fromTo(techRef.current,
-        {
-          opacity: 0,
-          y: 30
-        },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: techRef.current,
-            start: "top 85%",
-            end: "bottom 15%",
-            toggleActions: "play none none reverse"
-          }
+      gsap.to(techRef.current, {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: techRef.current,
+          start: "top 85%",
+          end: "bottom 15%",
+          toggleActions: "play none none reverse"
         }
-      )
+      })
 
       // Tech items animation
       techItemsRef.current.forEach((item, index) => {
         if (item) {
-          gsap.fromTo(item,
-            {
-              opacity: 0,
-              y: 30,
-              scale: 0.8
-            },
-            {
-              opacity: 1,
-              y: 0,
-              scale: 1,
-              duration: 0.6,
-              ease: "power2.out",
-              delay: index * 0.1,
-              scrollTrigger: {
-                trigger: item,
-                start: "top 85%",
-                end: "bottom 15%",
-                toggleActions: "play none none reverse"
-              }
+          gsap.to(item, {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.6,
+            ease: "power2.out",
+            delay: index * 0.1,
+            scrollTrigger: {
+              trigger: item,
+              start: "top 85%",
+              end: "bottom 15%",
+              toggleActions: "play none none reverse"
             }
-          )
+          })
         }
       })
 
     }, containerRef)
 
     return () => ctx.revert()
-  }, [])
+  }, [data]) // Re-run when data changes
 
   const addToTechRefs = (el: HTMLDivElement) => {
     if (el && !techItemsRef.current.includes(el)) {
@@ -215,7 +197,7 @@ const ProjectDetails: React.FC<ProjectDetailProps> = ({ data, onBack }) => {
       <button
         ref={backButtonRef}
         onClick={handleBack}
-        className="fixed top-22 left-10 z-50 group"
+        className="fixed top-22 left-10 z-50 group gsap-hidden"
       >
         <div className="absolute -inset-2 bg-gradient-to-r from-blue-400/20 to-cyan-400/20 rounded-xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
         
@@ -245,7 +227,7 @@ const ProjectDetails: React.FC<ProjectDetailProps> = ({ data, onBack }) => {
         <div className="text-left mb-16">
           <h1 
             ref={titleRef}
-            className="text-4xl md:text-5xl lg:text-6xl text-white mb-8 font-bold"
+            className="text-4xl md:text-5xl lg:text-6xl text-white mb-8 font-bold gsap-hidden"
           >
             {data.title}
           </h1>
@@ -253,14 +235,14 @@ const ProjectDetails: React.FC<ProjectDetailProps> = ({ data, onBack }) => {
           <div className="flex flex-col gap-4 text-lg">
             <div 
               ref={roleRef}
-              className="text-blue-300 font-medium"
+              className="text-blue-300 font-medium gsap-hidden"
             >
               {data.role}
             </div>
             
             <div 
               ref={dateRef}
-              className="text-cyan-300 font-medium"
+              className="text-cyan-300 font-medium gsap-hidden"
             >
               {data.date}
             </div>
@@ -270,7 +252,7 @@ const ProjectDetails: React.FC<ProjectDetailProps> = ({ data, onBack }) => {
         {/* Full Width Image Section */}
         <div 
           ref={imageRef}
-          className="relative group mb-16"
+          className="relative group mb-16 gsap-hidden"
         >
           <div className="absolute -inset-2 bg-gradient-to-r from-blue-400/20 to-cyan-400/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
           
@@ -294,7 +276,7 @@ const ProjectDetails: React.FC<ProjectDetailProps> = ({ data, onBack }) => {
           {/* Overview Section - 60% width */}
           <div 
             ref={overviewRef}
-            className="lg:col-span-6 flex flex-col justify-start"
+            className="lg:col-span-6 flex flex-col justify-start gsap-hidden"
           >
             <div className="mb-6">
               <h3 className="text-2xl md:text-3xl text-white mb-4">
@@ -311,7 +293,7 @@ const ProjectDetails: React.FC<ProjectDetailProps> = ({ data, onBack }) => {
           {/* Technologies Section - 40% width */}
           <div 
             ref={techRef}
-            className="lg:col-span-4"
+            className="lg:col-span-4 gsap-hidden"
           >
             <h3 className="text-2xl md:text-3xl text-white mb-8">
               Technologies <span className="text-blue-400">Used</span>
@@ -322,7 +304,7 @@ const ProjectDetails: React.FC<ProjectDetailProps> = ({ data, onBack }) => {
                 <div
                   key={tech.name}
                   ref={addToTechRefs}
-                  className="group relative"
+                  className="group relative gsap-hidden"
                 >
                   <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-400/30 to-cyan-400/30 rounded-xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                   
@@ -371,6 +353,12 @@ const ProjectDetails: React.FC<ProjectDetailProps> = ({ data, onBack }) => {
       <div>
         <Contact />
       </div>
+
+      <style jsx>{`
+        .gsap-hidden {
+          opacity: 0;
+        }
+      `}</style>
     </div>
   )
 }

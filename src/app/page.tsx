@@ -7,8 +7,9 @@ import HomePage from "@/components/home/HomePage";
 import Project from "@/components/project/Projects"
 import TechStack from "@/components/techstack/TechStack";
 
+
 export default function Home() {
-  
+
   return (
     <div className="relative flex flex-col items-center justify-center bg-[#02000D] text-white overflow-hidden">
       <div className="w-full relative">
