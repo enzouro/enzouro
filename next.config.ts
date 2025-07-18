@@ -2,12 +2,12 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
-  basePath: '/enzouro',
-  assetPrefix: '/enzouro',
+  // basePath: '/enzouro',
+  // assetPrefix: '/enzouro',
   output: 'export',
-  images: {
-    unoptimized: true
-  }
+  // images: {
+  //   unoptimized: true
+  // }
 };
 
 export default nextConfig;
