@@ -15,8 +15,22 @@ const Project = () => {
 
   // Mock project data with tech stacks
   const projects = [
-    {
+        {
       id: 1,
+      title: "The 02 FilesBAcked Up: The 02 Files",
+      description: "July.2025/Fullstack/Design",
+      image: "/images/Yearbook-web.png",
+      hoverGif: "/images/Yearbook.png",
+      detailsUrl: "/projects/ClassYearbook",
+      techStack: [
+      { name: "NextJs", icon: "/images/icons/mongodb-icon.svg" },
+      { name: "React", icon: "/images/icons/react.svg" },
+      { name: "Tailwind CSS", icon: "/images/icons/tailwindcss-icon.svg" },
+      { name: "Firebase", icon: "/images/icons/firebase-icon.svg" },
+      ]
+    },
+    {
+      id: 2,
       title: "KIST Park Website",
       description: "May.2025/Dev & Maintenance",
       image: "/images/kist-park-logo.png",
@@ -31,7 +45,7 @@ const Project = () => {
       ]
     },
     {
-      id: 2,
+      id: 3,
       title: "KIST Park Admin Dashboard",
       description: "May.2025/Dev & Design",
       image: "/images/kist-admin-login.png",
@@ -45,7 +59,7 @@ const Project = () => {
       ]
     },
     {
-      id: 3,
+      id: 4,
       title: "Part Procurement System",
       description: "Dec.2025/Capstone/Dev, Design & Documentation",
       image: "/images/capstone-login.png",
@@ -60,7 +74,7 @@ const Project = () => {
       ]
     },
     {
-      id: 4,
+      id: 5,
       title: "WakeNav",
       description: "July.2025/Dev, Design & Documentation",
       image: "/images/flutter-splash.png",

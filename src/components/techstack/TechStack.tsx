@@ -172,7 +172,7 @@ const TechStack: React.FC = () => {
 
         {/* Tech Grid */}
         <div ref={techGridRef} className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-7 gap-3">
             {techstacks.map((tech, index) => (
               <div
                 key={tech.name}
@@ -183,26 +183,26 @@ const TechStack: React.FC = () => {
                 <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-400/30 to-cyan-400/30 rounded-xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 
                 {/* Card */}
-                <div className="tech-card relative bg-slate-900/20 backdrop-blur-sm border border-blue-500/20 rounded-xl p-4 h-full transition-all duration-300 group-hover:border-blue-500/40 group-hover:bg-slate-900/30">
+                <div className="tech-card relative bg-slate-900/20 backdrop-blur-sm border border-blue-500/20 rounded-xl p-3 h-full transition-all duration-300 group-hover:border-blue-500/40 group-hover:bg-slate-900/30">
                   {/* Icon */}
-                  <div className="mb-3 flex justify-center">
+                  <div className="mb-2 flex justify-center">
                     <div className="relative">
                       {/* Glow effect behind icon */}
-                      <div className="absolute inset-0 w-10 h-10 bg-white/10 rounded-full blur-sm"></div>
-                      <div className="absolute inset-0 w-10 h-10 bg-blue-400/20 rounded-full blur-md"></div>
-                      <div className="absolute inset-0 w-10 h-10 bg-cyan-400/10 rounded-full blur-lg"></div>
+                      <div className="absolute inset-0 w-8 h-8 bg-white/10 rounded-full blur-sm"></div>
+                      <div className="absolute inset-0 w-8 h-8 bg-blue-400/20 rounded-full blur-md"></div>
+                      <div className="absolute inset-0 w-8 h-8 bg-cyan-400/10 rounded-full blur-lg"></div>
                       
                       {/* Icon */}
                       <img 
                         src={tech.icon} 
                         alt={tech.name} 
-                        className="relative w-10 h-10 object-contain z-10 drop-shadow-lg"
+                        className="relative w-8 h-8 object-contain z-10 drop-shadow-lg"
                       />
                     </div>
                   </div>
                   
                   {/* Tech Name */}
-                  <h3 className="text-white text-base mb-1 transition-colors duration-300 group-hover:text-blue-300 text-center">
+                  <h3 className="text-white text-sm mb-1 transition-colors duration-300 group-hover:text-blue-300 text-center">
                     {tech.name}
                   </h3>
                   

@@ -210,26 +210,26 @@ const ProjectDetails: React.FC<ProjectDetailProps> = ({ data, onBack }) => {
       <button
         ref={backButtonRef}
         onClick={handleBack}
-        className="fixed top-22 left-10 z-50 group gsap-hidden"
+        className="fixed top-3 left-10 sm:top-22 sm:left-10 z-50 group gsap-hidden"
       >
-        <div className="absolute -inset-2 bg-gradient-to-r from-blue-400/20 to-cyan-400/20 rounded-xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+        <div className="absolute -inset-1 sm:-inset-2 bg-gradient-to-r from-blue-400/20 to-cyan-400/20 rounded-lg sm:rounded-xl blur-lg sm:blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
         
-        <div className="relative bg-slate-900/20 backdrop-blur-sm border border-blue-500/20 rounded-xl p-3 transition-all duration-300 group-hover:border-blue-500/40 group-hover:bg-slate-900/30">
-          <div className="flex items-center gap-2">
+        <div className="relative bg-slate-900/30 sm:bg-slate-900/20 backdrop-blur-sm border border-blue-500/30 sm:border-blue-500/20 rounded-lg sm:rounded-xl p-2 sm:p-3 transition-all duration-300 group-hover:border-blue-500/40 group-hover:bg-slate-900/40 sm:group-hover:bg-slate-900/30">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             <svg 
-              className="w-5 h-5 text-blue-400 transition-colors duration-300 group-hover:text-blue-300" 
+              className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400 transition-colors duration-300 group-hover:text-blue-300" 
               fill="none" 
               stroke="currentColor" 
               viewBox="0 0 24 24"
             >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-            <span className="text-white text-sm font-medium transition-colors duration-300 group-hover:text-blue-300">
+            <span className="text-white text-xs sm:text-sm font-medium transition-colors duration-300 group-hover:text-blue-300">
               Back
             </span>
           </div>
           
-          <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-blue-500/5 via-transparent to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div className="absolute inset-0 rounded-lg sm:rounded-xl bg-gradient-to-br from-blue-500/5 via-transparent to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
         </div>
       </button>
 
