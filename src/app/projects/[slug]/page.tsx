@@ -133,9 +133,9 @@ export async function generateStaticParams() {
 }
 
 interface ProjectPageProps {
-  params: Promise<{
+  params: {
     slug: string
-  }>
+  }
 }
 
 export default async function ProjectPage({ params }: ProjectPageProps) {
