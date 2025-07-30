@@ -172,6 +172,7 @@ export async function generateMetadata({ params }: ProjectPageProps) {
     title: `${project.title} - John Lorenz Portfolio`,
     description: project.overview.substring(0, 160) + '...',
     keywords: project.technologies.map(tech => tech.name).join(', '),
+    metadataBase: new URL('https://enzouro.vercel.app'), // Change this to your production URL
     openGraph: {
       title: project.title,
       description: project.overview.substring(0, 160) + '...',
