@@ -2,7 +2,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useRouter } from 'next/navigation';
 import Squares from '../ui/Squarces';
+
 
 // Register ScrollTrigger plugin
 gsap.registerPlugin(ScrollTrigger);
@@ -13,18 +15,19 @@ const Project = () => {
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
   const [isMobile, setIsMobile] = useState(false);
   const [pressedCard, setPressedCard] = useState<number | null>(null);
+  const router = useRouter();
 
   // Mock project data with tech stacks
   const projects = [
     {
       id: 1,
-      title: "The 02 FilesBAcked Up: The 02 Files",
+      title: "BAcked Up: The 02 Files",
       description: "July.2025/Fullstack/Design",
       image: "/images/Yearbook-web.png",
       hoverGif: "/images/Yearbook.png",
-      detailsUrl: "/projects/ClassYearbook",
+      detailsUrl: "/projects/backed-up-the-02-files", // Fixed URL format
       techStack: [
-        { name: "NextJs", icon: "/images/icons/mongodb-icon.svg" },
+        { name: "NextJs", icon: "/images/icons/nextjs-icon.svg" }, // Fixed icon path
         { name: "React", icon: "/images/icons/react.svg" },
         { name: "Tailwind CSS", icon: "/images/icons/tailwindcss-icon.svg" },
         { name: "Firebase", icon: "/images/icons/firebase-icon.svg" },
@@ -36,7 +39,7 @@ const Project = () => {
       description: "May.2025/Dev & Maintenance",
       image: "/images/kist-park-logo.png",
       hoverGif: "/images/kist-park-web.png",
-      detailsUrl: "/projects/FirstKISTPark",
+      detailsUrl: "/projects/first-kist-park-website",
       techStack: [
         { name: "Html5", icon: "/images/icons/html-5.svg" },
         { name: "CSS3", icon: "/images/icons/css-3.svg" },
@@ -51,7 +54,7 @@ const Project = () => {
       description: "May.2025/Dev & Design",
       image: "/images/kist-admin-login.png",
       hoverGif: "/images/kist-admin-web.png",
-      detailsUrl: "/projects/KISTParkAdmin",
+      detailsUrl: "/projects/kist-park-admin-dashboard",
       techStack: [
         { name: "MongoDb", icon: "/images/icons/mongodb-icon.svg" },
         { name: "Express.Js", icon: "/images/icons/express.svg" },
@@ -65,7 +68,7 @@ const Project = () => {
       description: "Dec.2025/Capstone/Dev, Design & Documentation",
       image: "/images/capstone-login.png",
       hoverGif: "/images/capstone-web.png",
-      detailsUrl: "/projects/Capstone",
+      detailsUrl: "/projects/part-procurement-system",
       techStack: [
         { name: "MongoDb", icon: "/images/icons/mongodb-icon.svg" },
         { name: "Express.Js", icon: "/images/icons/express.svg" },
@@ -80,7 +83,7 @@ const Project = () => {
       description: "July.2025/Dev, Design & Documentation",
       image: "/images/flutter-splash.png",
       hoverGif: "/images/flutter-app.png",
-      detailsUrl: "/projects/WakeNav",
+      detailsUrl: "/projects/wakenav-navigation-alarm-app", // Fixed to match slug
       techStack: [
         { name: "Flutter", icon: "/images/icons/flutter.svg" },
         { name: "Dart", icon: "/images/icons/dart.svg" },
@@ -185,7 +188,7 @@ const Project = () => {
   }, []);
 
   const handleCardClick = (project: any) => {
-    window.location.href = project.detailsUrl;
+    router.push(project.detailsUrl);
   };
 
   const handleTouchStart = (index: number) => {
@@ -210,12 +213,12 @@ const Project = () => {
     <div className="min-h-screen py-16 px-4">
       <div className="absolute inset-0 z-0 w-full h-full">
         <Squares 
-          speed={0.3} // Reduced speed for less interference
+          speed={0.3}
           squareSize={40}
           direction='diagonal'
           borderColor='#194973'
           hoverFillColor='#194973'
-          fps={24} // Lower FPS for better performance
+          fps={24}
         />
       </div>
       <div className="max-w-7xl mx-auto">

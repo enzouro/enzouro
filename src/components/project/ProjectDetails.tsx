@@ -1,8 +1,9 @@
 'use client'
-import React, { useEffect, useRef, useLayoutEffect } from 'react'
+import React, { useEffect, useRef, useLayoutEffect, useState } from 'react'
 import Image from 'next/image'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useRouter } from 'next/navigation'
 import Contact from '../contact/Contact'
 
 // Register ScrollTrigger plugin
@@ -17,10 +18,10 @@ interface ProjectData {
   title: string
   role: string
   date: string
-  image: string
+  images: string[]
   overview: string
   technologies: Technology[]
-  link?: string // Added link field
+  link?: string
 }
 
 interface ProjectDetailProps {
@@ -33,12 +34,28 @@ const ProjectDetails: React.FC<ProjectDetailProps> = ({ data, onBack }) => {
   const titleRef = useRef<HTMLHeadingElement>(null)
   const roleRef = useRef<HTMLDivElement>(null)
   const dateRef = useRef<HTMLDivElement>(null)
-  const imageRef = useRef<HTMLDivElement>(null)
+  const carouselRef = useRef<HTMLDivElement>(null)
   const overviewRef = useRef<HTMLDivElement>(null)
   const techRef = useRef<HTMLDivElement>(null)
   const techItemsRef = useRef<HTMLDivElement[]>([])
   const backButtonRef = useRef<HTMLButtonElement>(null)
-  const viewProjectRef = useRef<HTMLAnchorElement>(null) // New ref for view project button
+  const viewProjectRef = useRef<HTMLAnchorElement>(null)
+  const router = useRouter()
+  
+  // Carousel state
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true)
+
+  // Auto-play carousel
+  useEffect(() => {
+    if (!isAutoPlaying || data.images.length <= 1) return
+
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % data.images.length)
+    }, 4000)
+
+    return () => clearInterval(interval)
+  }, [isAutoPlaying, data.images.length])
 
   // Set initial states immediately to prevent flash
   useLayoutEffect(() => {
@@ -49,14 +66,14 @@ const ProjectDetails: React.FC<ProjectDetailProps> = ({ data, onBack }) => {
         titleRef.current,
         roleRef.current,
         dateRef.current,
-        imageRef.current,
+        carouselRef.current,
         overviewRef.current,
         techRef.current,
         viewProjectRef.current,
         ...techItemsRef.current
       ], {
         opacity: 0,
-        clearProps: "transform" // Clear any existing transforms
+        clearProps: "transform"
       })
 
       // Set specific initial transforms
@@ -64,7 +81,7 @@ const ProjectDetails: React.FC<ProjectDetailProps> = ({ data, onBack }) => {
       gsap.set(titleRef.current, { y: 50, scale: 0.8 })
       gsap.set(roleRef.current, { x: -30 })
       gsap.set(dateRef.current, { x: -30 })
-      gsap.set(imageRef.current, { scale: 0.8, rotateY: 15 })
+      gsap.set(carouselRef.current, { scale: 0.8, rotateY: 15 })
       gsap.set(overviewRef.current, { y: 40 })
       gsap.set(techRef.current, { y: 30 })
       gsap.set(viewProjectRef.current, { y: 20, scale: 0.9 })
@@ -78,12 +95,12 @@ const ProjectDetails: React.FC<ProjectDetailProps> = ({ data, onBack }) => {
     }, containerRef)
 
     return () => ctx.revert()
-  }, []) // Empty dependency array - only run once
+  }, [])
 
   useEffect(() => {
     const ctx = gsap.context(() => {
       // Timeline for initial page load animations
-      const tl = gsap.timeline({ delay: 0.1 }) // Reduced delay since we're using useLayoutEffect
+      const tl = gsap.timeline({ delay: 0.1 })
 
       // Back button animation
       tl.to(backButtonRef.current, {
@@ -120,16 +137,18 @@ const ProjectDetails: React.FC<ProjectDetailProps> = ({ data, onBack }) => {
       }, "-=0.7")
 
       // View Project button animation
-      tl.to(viewProjectRef.current, {
-        opacity: 1,
-        y: 0,
-        scale: 1,
-        duration: 0.8,
-        ease: "power2.out"
-      }, "-=0.6")
+      if (viewProjectRef.current) {
+        tl.to(viewProjectRef.current, {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.8,
+          ease: "power2.out"
+        }, "-=0.6")
+      }
 
-      // Image animation
-      tl.to(imageRef.current, {
+      // Carousel animation
+      tl.to(carouselRef.current, {
         opacity: 1,
         scale: 1,
         rotateY: 0,
@@ -188,9 +207,9 @@ const ProjectDetails: React.FC<ProjectDetailProps> = ({ data, onBack }) => {
     }, containerRef)
 
     return () => ctx.revert()
-  }, [data]) // Re-run when data changes
+  }, [data])
 
-  const addToTechRefs = (el: HTMLDivElement) => {
+  const addToTechRefs = (el: HTMLDivElement | null) => {
     if (el && !techItemsRef.current.includes(el)) {
       techItemsRef.current.push(el)
     }
@@ -200,8 +219,20 @@ const ProjectDetails: React.FC<ProjectDetailProps> = ({ data, onBack }) => {
     if (onBack) {
       onBack()
     } else {
-      window.history.back()
+      router.back()
     }
+  }
+
+  const goToNextImage = () => {
+    setCurrentImageIndex((prev) => (prev + 1) % data.images.length)
+  }
+
+  const goToPrevImage = () => {
+    setCurrentImageIndex((prev) => (prev - 1 + data.images.length) % data.images.length)
+  }
+
+  const goToImage = (index: number) => {
+    setCurrentImageIndex(index)
   }
 
   return (
@@ -210,7 +241,7 @@ const ProjectDetails: React.FC<ProjectDetailProps> = ({ data, onBack }) => {
       <button
         ref={backButtonRef}
         onClick={handleBack}
-        className="fixed top-3 left-10 sm:top-22 sm:left-10 z-50 group gsap-hidden"
+        className="fixed top-6 left-6 lg:top-22 lg:left-15 z-50 group gsap-hidden"
       >
         <div className="absolute -inset-1 sm:-inset-2 bg-gradient-to-r from-blue-400/20 to-cyan-400/20 rounded-lg sm:rounded-xl blur-lg sm:blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
         
@@ -301,25 +332,90 @@ const ProjectDetails: React.FC<ProjectDetailProps> = ({ data, onBack }) => {
           )}
         </div>
 
-        {/* Full Width Image Section */}
+        {/* Image Carousel Section */}
         <div 
-          ref={imageRef}
+          ref={carouselRef}
           className="relative group mb-16 gsap-hidden"
+          onMouseEnter={() => setIsAutoPlaying(false)}
+          onMouseLeave={() => setIsAutoPlaying(true)}
         >
           <div className="absolute -inset-2 bg-gradient-to-r from-blue-400/20 to-cyan-400/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
           
           <div className="relative bg-slate-900/20 backdrop-blur-sm border border-blue-500/20 rounded-2xl p-4 transition-all duration-300 group-hover:border-blue-500/40 group-hover:bg-slate-900/30">
             <div className="relative overflow-hidden rounded-xl aspect-[16/9]">
-              <Image
-                src={data.image}
-                width={1200}
-                height={675}
+              {/* Images */}
+              <div className="relative w-full h-full">
+                {data.images.map((image, index) => (
+                  <div
+                    key={index}
+                    className={`absolute inset-0 transition-opacity duration-500 ${
+                      index === currentImageIndex ? 'opacity-100' : 'opacity-0'
+                    }`}
+                  >
+                    <Image
+                      src={image}
+                      alt={`${data.title} project screenshot ${index + 1}`}
+                      fill
+                      className="object-contain w-full h-full"
+                    />
+
+                  </div>
+                ))}
                 
-                alt={`${data.title} project screenshot`}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                {/* Gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              </div>
+
+              {/* Navigation Arrows - Only show if more than 1 image */}
+              {data.images.length > 1 && (
+                <>
+                  <button
+                    onClick={goToPrevImage}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all duration-300 opacity-0 group-hover:opacity-100 hover:scale-110"
+                    aria-label="Previous image"
+                  >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </button>
+
+                  <button
+                    onClick={goToNextImage}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all duration-300 opacity-0 group-hover:opacity-100 hover:scale-110"
+                    aria-label="Next image"
+                  >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </>
+              )}
+
+              {/* Image Counter */}
+              {data.images.length > 1 && (
+                <div className="absolute top-4 right-4 bg-black/50 text-white px-3 py-1 rounded-full text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  {currentImageIndex + 1} / {data.images.length}
+                </div>
+              )}
             </div>
+
+            {/* Dot Indicators - Only show if more than 1 image */}
+            {data.images.length > 1 && (
+              <div className="flex justify-center mt-4 gap-2">
+                {data.images.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => goToImage(index)}
+                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                      index === currentImageIndex
+                        ? 'bg-blue-400 scale-125'
+                        : 'bg-gray-500 hover:bg-gray-400'
+                    }`}
+                    aria-label={`Go to image ${index + 1}`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
