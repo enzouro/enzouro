@@ -1,13 +1,14 @@
 // app/projects/[slug]/page.tsx
 import React from 'react'
 import { notFound } from 'next/navigation'
+import { Metadata } from 'next'
 import ProjectDetails from "@/components/project/ProjectDetails"
 
 const projectsData = [
   {
     id: 1,
     title: "BAcked Up: The 02 Files",
-    slug: "backed-up-the-02-files", // Fixed slug format
+    slug: "backed-up-the-02-files",
     role: "Fullstack Developer",
     date: "July 2025",
     images: [
@@ -15,11 +16,10 @@ const projectsData = [
       "/images/yearbook/yearbook-2.png",
       "/images/yearbook/yearbook-3.png",
       "/images/yearbook/yearbook-4.png",
-
     ], 
     overview: "A special keepsake for Batangas State University - The National Engineering University - Lipa Campus BSIT-BA 02 — complete with a video to look back on, a chalkboard for heartfelt messages, and a flipbook to remember every one of us. Created using Next.js, React, Tailwind CSS, and Firebase for real-time database functionality.",
     technologies: [
-      { name: "NextJs", icon: "/images/icons/nextjs-icon.svg" }, // Fixed icon path
+      { name: "NextJs", icon: "/images/icons/nextjs-icon.svg" },
       { name: "React", icon: "/images/icons/react.svg" },
       { name: "Tailwind CSS", icon: "/images/icons/tailwindcss-icon.svg" },
       { name: "Firebase", icon: "/images/icons/firebase-icon.svg" },
@@ -39,8 +39,8 @@ const projectsData = [
     ], 
     overview: `Maintained and enhanced the KIST Park website (firstkistpark.com) to improve functionality and user experience across devices. Designed and implemented additional pages to provide essential information for future locators and STEER Hub service users. Implemented website crawling via Google Search Console and integrating Google Analytics for search engine optimization and website traffic monitoring.`,
     technologies: [
-      { name: "HTML5", icon: "/images/icons/html-5.svg" }, // Fixed icon path
-      { name: "CSS3", icon: "/images/icons/css-3.svg" }, // Fixed icon path
+      { name: "HTML5", icon: "/images/icons/html-5.svg" },
+      { name: "CSS3", icon: "/images/icons/css-3.svg" },
       { name: "JavaScript", icon: "/images/icons/javascript.svg" },
       { name: "Google Search Console", icon: "/images/icons/google-search-console.svg" },
       { name: "Google Analytics", icon: "/images/icons/google-analytics.svg" },
@@ -110,6 +110,11 @@ const projectsData = [
   },
 ]
 
+// Types
+interface ProjectPageProps {
+  params: Promise<{ slug: string }>
+}
+
 // Utility function to create slug from title
 export const createSlug = (title: string): string => {
   return title
@@ -125,21 +130,18 @@ export const getProjectBySlug = (slug: string) => {
   return projectsData.find(project => project.slug === slug)
 }
 
-// Generate static params for static generation (optional)
+// Generate static params for static generation
 export async function generateStaticParams() {
   return projectsData.map(project => ({
     slug: project.slug
   }))
 }
 
-interface ProjectPageProps {
-  params: {
-    slug: string
-  }
-}
-
-export default async function ProjectPage({ params }: ProjectPageProps) {
-  const { slug } = await params
+// Main page component
+export default async function ProjectPage(props: ProjectPageProps) {
+  // Await the params Promise
+  const params = await props.params
+  const { slug } = params
   
   // Find the project data based on the slug
   const project = getProjectBySlug(slug)
@@ -157,33 +159,49 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 }
 
 // Metadata generation for SEO
-export async function generateMetadata({ params }: ProjectPageProps) {
-  const { slug } = await params
+export async function generateMetadata(props: ProjectPageProps): Promise<Metadata> {
+  // Await the params Promise
+  const params = await props.params
+  const { slug } = params
   const project = getProjectBySlug(slug)
   
   if (!project) {
     return {
       title: 'Project Not Found',
-      description: 'The requested project could not be found.'
+      description: 'The requested project could not be found.',
+      metadataBase: new URL(process.env.NODE_ENV === 'production' ? 'https://yourdomain.com' : 'http://localhost:3000'),
     }
   }
 
+  const baseUrl = process.env.NODE_ENV === 'production' ? 'https://yourdomain.com' : 'http://localhost:3000'
+
   return {
     title: `${project.title} - John Lorenz Portfolio`,
-    description: project.overview.substring(0, 160) + '...',
+    description: project.overview.substring(0, 160) + (project.overview.length > 160 ? '...' : ''),
     keywords: project.technologies.map(tech => tech.name).join(', '),
-    metadataBase: new URL('https://enzouro.vercel.app'), // Change this to your production URL
+    metadataBase: new URL(baseUrl),
     openGraph: {
       title: project.title,
-      description: project.overview.substring(0, 160) + '...',
-      images: [project.images[0]], // Use first image as OG image
+      description: project.overview.substring(0, 160) + (project.overview.length > 160 ? '...' : ''),
+      images: [
+        {
+          url: project.images[0],
+          width: 1200,
+          height: 630,
+          alt: project.title,
+        }
+      ],
       type: 'website',
+      siteName: 'John Lorenz Portfolio',
     },
     twitter: {
       card: 'summary_large_image',
       title: project.title,
-      description: project.overview.substring(0, 160) + '...',
+      description: project.overview.substring(0, 160) + (project.overview.length > 160 ? '...' : ''),
       images: [project.images[0]],
-    }
+    },
+    alternates: {
+      canonical: `/projects/${slug}`,
+    },
   }
 }
