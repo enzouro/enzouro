@@ -1,21 +1,22 @@
 'use client'
 import React, { useEffect, useRef, useState } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import Squares from '../ui/Squarces';
+
+// Register ScrollTrigger plugin
+gsap.registerPlugin(ScrollTrigger);
 
 const Project = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
-  const lastScrollY = useRef(0);
-  const visibleCards = useRef<Set<number>>(new Set());
-  const animationTimeouts = useRef<Map<number, NodeJS.Timeout>>(new Map());
-  const headerVisible = useRef(false);
   const [isMobile, setIsMobile] = useState(false);
   const [pressedCard, setPressedCard] = useState<number | null>(null);
-  const [isInitialized, setIsInitialized] = useState(false);
 
   // Mock project data with tech stacks
   const projects = [
-        {
+    {
       id: 1,
       title: "The 02 FilesBAcked Up: The 02 Files",
       description: "July.2025/Fullstack/Design",
@@ -23,10 +24,10 @@ const Project = () => {
       hoverGif: "/images/Yearbook.png",
       detailsUrl: "/projects/ClassYearbook",
       techStack: [
-      { name: "NextJs", icon: "/images/icons/mongodb-icon.svg" },
-      { name: "React", icon: "/images/icons/react.svg" },
-      { name: "Tailwind CSS", icon: "/images/icons/tailwindcss-icon.svg" },
-      { name: "Firebase", icon: "/images/icons/firebase-icon.svg" },
+        { name: "NextJs", icon: "/images/icons/mongodb-icon.svg" },
+        { name: "React", icon: "/images/icons/react.svg" },
+        { name: "Tailwind CSS", icon: "/images/icons/tailwindcss-icon.svg" },
+        { name: "Firebase", icon: "/images/icons/firebase-icon.svg" },
       ]
     },
     {
@@ -100,130 +101,91 @@ const Project = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  const clearTimeouts = () => {
-    animationTimeouts.current.forEach(timeout => clearTimeout(timeout));
-    animationTimeouts.current.clear();
-  };
+  useEffect(() => {
+    // Set initial states
+    gsap.set(headerRef.current, {
+      y: 30,
+      opacity: 0
+    });
 
-  const animateCard = (index: number, isVisible: boolean, delay: number = 0) => {
-    const card = cardsRef.current[index];
-    if (!card) return;
+    gsap.set(cardsRef.current, {
+      y: 50,
+      scale: 0.9,
+      opacity: 0
+    });
 
-    // Clear existing timeout for this card
-    const existingTimeout = animationTimeouts.current.get(index);
-    if (existingTimeout) {
-      clearTimeout(existingTimeout);
-    }
-
-    const timeoutId = setTimeout(() => {
-      if (isVisible) {
-        card.style.transform = 'translateY(0) scale(1)';
-        card.style.opacity = '1';
-      } else {
-        card.style.transform = 'translateY(50px) scale(0.9)';
-        card.style.opacity = '0';
-      }
-      animationTimeouts.current.delete(index);
-    }, delay);
-
-    animationTimeouts.current.set(index, timeoutId);
-  };
-
-  const animateHeader = (isVisible: boolean) => {
-    const header = headerRef.current;
-    if (!header) return;
-
-    if (isVisible && !headerVisible.current) {
-      header.style.transform = 'translateY(0)';
-      header.style.opacity = '1';
-      headerVisible.current = true;
-    } else if (!isVisible && headerVisible.current) {
-      header.style.transform = 'translateY(30px)';
-      header.style.opacity = '0';
-      headerVisible.current = false;
-    }
-  };
-
-  // Check if element is in viewport
-  const isElementInViewport = (element: HTMLElement, threshold: number = 0.15) => {
-    const rect = element.getBoundingClientRect();
-    const windowHeight = window.innerHeight;
-    const thresholdPx = windowHeight * threshold;
-    
-    return rect.top < windowHeight - thresholdPx && rect.bottom > thresholdPx;
-  };
-
-  // Initial visibility check and animation setup
-  const initializeAnimations = () => {
-    // Set up initial styles for header
-    const header = headerRef.current;
-    if (header) {
-      header.style.transition = 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-      
-      // Check if header is initially visible
-      if (isElementInViewport(header, 0.2)) {
-        header.style.transform = 'translateY(0)';
-        header.style.opacity = '1';
-        headerVisible.current = true;
-      } else {
-        header.style.transform = 'translateY(30px)';
-        header.style.opacity = '0';
-        headerVisible.current = false;
-      }
-    }
-
-    // Set up initial styles for cards
-    const cards = cardsRef.current;
-    const initialVisibleCards = new Set<number>();
-    
-    cards.forEach((card, index) => {
-      if (card) {
-        card.style.transition = 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-        
-        // Check if card is initially visible
-        if (isElementInViewport(card)) {
-          card.style.transform = 'translateY(0) scale(1)';
-          card.style.opacity = '1';
-          initialVisibleCards.add(index);
-        } else {
-          card.style.transform = 'translateY(50px) scale(0.9)';
-          card.style.opacity = '0';
-        }
+    // Header animation
+    gsap.to(headerRef.current, {
+      y: 0,
+      opacity: 1,
+      duration: 0.8,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: headerRef.current,
+        start: "top 80%",
+        end: "bottom 20%",
+        toggleActions: "play none none reverse"
       }
     });
 
-    // If cards are initially visible, animate them in with stagger
-    if (initialVisibleCards.size > 0) {
-      const sortedVisible = Array.from(initialVisibleCards).sort((a, b) => {
-        const cardA = cardsRef.current[a];
-        const cardB = cardsRef.current[b];
-        if (!cardA || !cardB) return 0;
-        
-        const rectA = cardA.getBoundingClientRect();
-        const rectB = cardB.getBoundingClientRect();
-        return rectA.top - rectB.top;
-      });
+    // Cards stagger animation
+    ScrollTrigger.batch(cardsRef.current, {
+      onEnter: (elements) => {
+        gsap.to(elements, {
+          y: 0,
+          scale: 1,
+          opacity: 1,
+          duration: 0.6,
+          ease: "power2.out",
+          stagger: 0.15,
+          overwrite: true
+        });
+      },
+      onLeave: (elements) => {
+        gsap.to(elements, {
+          y: 50,
+          scale: 0.9,
+          opacity: 0,
+          duration: 0.6,
+          ease: "power2.out",
+          stagger: 0.1,
+          overwrite: true
+        });
+      },
+      onEnterBack: (elements) => {
+        gsap.to(elements, {
+          y: 0,
+          scale: 1,
+          opacity: 1,
+          duration: 0.6,
+          ease: "power2.out",
+          stagger: 0.15,
+          overwrite: true
+        });
+      },
+      onLeaveBack: (elements) => {
+        gsap.to(elements, {
+          y: 50,
+          scale: 0.9,
+          opacity: 0,
+          duration: 0.6,
+          ease: "power2.out",
+          stagger: 0.1,
+          overwrite: true
+        });
+      },
+      start: "top 85%",
+      end: "bottom 15%"
+    });
 
-      sortedVisible.forEach((index, arrayIndex) => {
-        const delay = arrayIndex * 150;
-        setTimeout(() => {
-          animateCard(index, true, 0);
-        }, delay);
-      });
-    }
-
-    visibleCards.current = initialVisibleCards;
-    setIsInitialized(true);
-  };
+    // Cleanup function
+    return () => {
+      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+    };
+  }, []);
 
   const handleCardClick = (project: any) => {
-    // Navigate to project details page
     window.location.href = project.detailsUrl;
-  };
-
-  const handleSeeAllClick = () => {
-    // Navigate to all projects page
-    window.location.href = '/projects';
   };
 
   const handleTouchStart = (index: number) => {
@@ -238,135 +200,6 @@ const Project = () => {
     }
   };
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (!isInitialized) return;
-
-      const currentScrollY = window.scrollY;
-      const scrollDirection = currentScrollY > lastScrollY.current ? 'down' : 'up';
-      lastScrollY.current = currentScrollY;
-
-      // Check header visibility
-      const header = headerRef.current;
-      if (header) {
-        const isHeaderInView = isElementInViewport(header, 0.2);
-        animateHeader(isHeaderInView);
-      }
-
-      const cards = cardsRef.current;
-      const newVisibleCards = new Set<number>();
-      const enteringCards: number[] = [];
-      const exitingCards: number[] = [];
-
-      // Check each card's visibility
-      cards.forEach((card, index) => {
-        if (!card) return;
-
-        const isInView = isElementInViewport(card);
-
-        if (isInView) {
-          newVisibleCards.add(index);
-          if (!visibleCards.current.has(index)) {
-            enteringCards.push(index);
-          }
-        } else {
-          if (visibleCards.current.has(index)) {
-            exitingCards.push(index);
-          }
-        }
-      });
-
-      // Handle entering cards with stagger
-      if (enteringCards.length > 0) {
-        const sortedEntering = [...enteringCards].sort((a, b) => {
-          const cardA = cardsRef.current[a];
-          const cardB = cardsRef.current[b];
-          if (!cardA || !cardB) return 0;
-          
-          const rectA = cardA.getBoundingClientRect();
-          const rectB = cardB.getBoundingClientRect();
-          return rectA.top - rectB.top;
-        });
-
-        sortedEntering.forEach((index, arrayIndex) => {
-          const delay = scrollDirection === 'down' 
-            ? arrayIndex * 150 
-            : (sortedEntering.length - arrayIndex - 1) * 150;
-          animateCard(index, true, delay);
-        });
-      }
-
-      // Handle exiting cards with reverse stagger
-      if (exitingCards.length > 0) {
-        const sortedExiting = [...exitingCards].sort((a, b) => {
-          const cardA = cardsRef.current[a];
-          const cardB = cardsRef.current[b];
-          if (!cardA || !cardB) return 0;
-          
-          const rectA = cardA.getBoundingClientRect();
-          const rectB = cardB.getBoundingClientRect();
-          return rectA.top - rectB.top;
-        });
-
-        sortedExiting.forEach((index, arrayIndex) => {
-          const delay = scrollDirection === 'down'
-            ? (sortedExiting.length - arrayIndex - 1) * 100
-            : arrayIndex * 100;
-          animateCard(index, false, delay);
-        });
-      }
-
-      visibleCards.current = newVisibleCards;
-    };
-
-    // Throttled scroll handler
-    let ticking = false;
-    const throttledHandleScroll = () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          handleScroll();
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-
-    // Initialize animations after a short delay to ensure DOM is ready
-    const initTimeout = setTimeout(() => {
-      initializeAnimations();
-      
-      // Add scroll listener after initialization
-      window.addEventListener('scroll', throttledHandleScroll);
-      
-      // Perform initial scroll check
-      handleScroll();
-    }, 100);
-
-    return () => {
-      clearTimeout(initTimeout);
-      window.removeEventListener('scroll', throttledHandleScroll);
-      clearTimeouts();
-    };
-  }, [isInitialized]);
-
-  // Handle page load scroll position
-  useEffect(() => {
-    const handlePageLoad = () => {
-      // Small delay to ensure the page has settled after navigation
-      setTimeout(() => {
-        initializeAnimations();
-      }, 200);
-    };
-
-    // Check if page is already loaded
-    if (document.readyState === 'complete') {
-      handlePageLoad();
-    } else {
-      window.addEventListener('load', handlePageLoad);
-      return () => window.removeEventListener('load', handlePageLoad);
-    }
-  }, []);
-
   const addToRefs = (el: HTMLDivElement | null) => {
     if (el && !cardsRef.current.includes(el)) {
       cardsRef.current.push(el);
@@ -375,14 +208,24 @@ const Project = () => {
 
   return (
     <div className="min-h-screen py-16 px-4">
+      <div className="absolute inset-0 z-0 w-full h-full">
+        <Squares 
+          speed={0.3} // Reduced speed for less interference
+          squareSize={40}
+          direction='diagonal'
+          borderColor='#194973'
+          hoverFillColor='#194973'
+          fps={24} // Lower FPS for better performance
+        />
+      </div>
       <div className="max-w-7xl mx-auto">
-        {/* Header with scroll trigger */}
+        {/* Header with GSAP trigger */}
         <div className="text-center mb-16">
           <h2 
             ref={headerRef}
             className="text-5xl md:text-6xl text-white mb-6"
           >
-            Selected
+            My
             <span className="text-blue-400 ml-4 relative">
               Projects
               <div className="absolute -inset-2 bg-blue-500/20 blur-xl rounded-full opacity-60"></div>
