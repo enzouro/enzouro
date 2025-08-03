@@ -103,6 +103,23 @@ export const projectsData = [
       { name: "Leaflet", icon: "/images/icons/leaflet.svg" },
     ]
   },
+  { 
+    id: 6,
+    title: "RGO-Lipa-Inventory-System-with-Stock-Viewing-Dashboard",
+    slug: "rgo-lipa-inventory-system",
+    role: "FullStack Developer",
+    date: "November 2023",
+    images: ["/images/rgo/index.png", "/images/rgo/AdminDashboard.png", "/images/rgo/AdminProducts.png", "/images/rgo/AdminTransactions.png", "/images/rgo/AdminUsers.png", "/images/rgo/EmployeeStocks.png", "/images/rgo/EmployeeProducts.png", "/images/rgo/Client.png"], 
+    overview: "This system is designed to efficiently manage inventory-related tasks for an organization, providing distinct functionalities for Admins, Employees, and Clients (students). The technologies used in this project include HTML, CSS, JavaScript, PHP, SQL, Tailwind CSS for styling, and AJAX jQuery for dynamic functionality. The database is managed using PHPMyAdmin in XAMPP.",
+    technologies: [
+      { name: "Html", icon: "/images/icons/html-5.svg" },
+      { name: "JavaSript", icon: "/images/icons/javascript.svg" },
+      { name: "TailwindCss", icon: "/images/icons/tailwindcss-icon.svg" },
+      { name: "Php", icon: "/images/icons/php.svg" },
+      { name: "Xampp", icon: "/images/icons/xampp.svg" },
+
+    ]
+  },
 ]
 
 // Utility function to create slug from title

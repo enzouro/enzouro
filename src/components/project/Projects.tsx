@@ -83,11 +83,26 @@ const Project = () => {
       description: "July.2025/Dev, Design & Documentation",
       image: "/images/flutter-splash.png",
       hoverGif: "/images/flutter-app.png",
-      detailsUrl: "/projects/wakenav-navigation-alarm-app", // Fixed to match slug
+      detailsUrl: "/projects/wakenav-navigation-alarm-app",
       techStack: [
         { name: "Flutter", icon: "/images/icons/flutter.svg" },
         { name: "Dart", icon: "/images/icons/dart.svg" },
         { name: "Leaflet", icon: "/images/icons/leaflet.svg" },
+      ]
+    },
+    {
+      id: 6,
+      title: "RGO-Lipa Inventory System",
+      description: "November.2023/Dev, Design & Documentation",
+      image: "/images/rgo/Rgo.png",
+      hoverGif: "/images/rgo/Rgo-1.png",
+      detailsUrl: "/projects/rgo-lipa-inventory-system",
+      techStack: [
+      { name: "Html", icon: "/images/icons/html-5.svg" },
+      { name: "JavaSript", icon: "/images/icons/javascript.svg" },
+      { name: "TailwindCss", icon: "/images/icons/tailwindcss-icon.svg" },
+      { name: "Php", icon: "/images/icons/php.svg" },
+      { name: "Xampp", icon: "/images/icons/xampp.svg" },
       ]
     },
   ];
