@@ -19,6 +19,7 @@ export const projectsData = [
       { name: "Tailwind CSS", icon: "/images/icons/tailwindcss-icon.svg" },
       { name: "Firebase", icon: "/images/icons/firebase-icon.svg" },
     ],
+    link: "https://www.the02files.com",
   },
   {
     id: 2,
@@ -56,7 +57,7 @@ export const projectsData = [
       "/images/kist-admin/kistadmin-5.png",
       "/images/kist-admin/kistadmin-6.png",
     ], 
-    overview: "Developed and maintained the KIST Park Admin Dashboard, a web-based application for managing KIST Park operations. The dashboard features user management, service requests, and real-time data analytics. Built with the MERN stack (MongoDB, Express.js, React.js, Node.js) for robust performance and scalability.",
+    overview: "Developed and maintained the KIST Park Admin Dashboard, a web-based application for managing KIST Park operations. The dashboard features user management and service requests. Built with the MERN stack (MongoDB, Express.js, React.js, Node.js) for robust performance and scalability.",
     technologies: [
       { name: "MongoDB", icon: "/images/icons/mongodb-icon.svg" },
       { name: "Express", icon: "/images/icons/express.svg" },
