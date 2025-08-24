@@ -19,7 +19,7 @@ export const projectsData = [
       { name: "Tailwind CSS", icon: "/images/icons/tailwindcss-icon.svg" },
       { name: "Firebase", icon: "/images/icons/firebase-icon.svg" },
     ],
-    link: "https://www.the02files.com",
+    link: "https://www.the02files.site",
   },
   {
     id: 2,
